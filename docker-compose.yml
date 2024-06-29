@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+        context: .
+        dockerfile: .deploy/Dockerfile-back
+    env_file:
+      - .env_files/.web_env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/opt/app-root/app/:rw
+    restart: unless-stopped
+
+  postgres_db:
+    image: postgres:13
+    restart: always
+    env_file:
+      - ./.env_files/.db_env
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data:rw
+    ports:
+      - "5435:5432"
+
+  db_app:
+    build:
+      context: .
+      dockerfile: .deploy/Dockerfile-db
+    env_file:
+        - .env_files/.db_env
+    ports:
+      - "8100:8100"
+    volumes:
+      - ./db:/opt/app-root/db/:rw
+    restart: unless-stopped
+
+

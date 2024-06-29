@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file into the container
+COPY requirements.txt /opt/app-root/app/requirements.txt
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r /opt/app-root/app/requirements.txt
+
+# Set environment variables
+ENV PYTHONPATH /opt/app-root/app
+ENV PYTHONUNBUFFERED=1
+
+# Make port 8000 available to the world outside this container
+EXPOSE 8000
+
+CMD ["gunicorn", "--config", "/opt/app-root/app/web_app/api/settings/gunicorn.conf.py"]
